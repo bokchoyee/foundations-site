@@ -1,0 +1,30 @@
+# Installed packages (rebuilt with `npm install`)
+node_modules/
+
+# Build output (Cloudflare builds this itself)
+dist/
+.astro/
+
+# Secrets — never commit these
+.env
+.env.*
+!.env.example
+
+# Cloudflare local files
+.wrangler/
+.dev.vars
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Computer junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor settings
+.idea/
+.vscode/*
+!.vscode/extensions.json

@@ -1,0 +1,52 @@
+---
+import Mark from './Mark.astro';
+import { site } from '../site';
+const year = new Date().getFullYear();
+---
+<footer class="footer">
+  <div class="wrap inner">
+    <div class="left">
+      <a href="/" class="brand"><Mark size={20} /> {site.name}</a>
+      <p class="muted small">{site.description}</p>
+    </div>
+    <nav aria-label="Footer" class="links">
+      {site.nav.map((item) => <a href={item.href}>{item.label}</a>)}
+    </nav>
+  </div>
+  <div class="wrap">
+    <div class="base">
+      <span>© {year} {site.author}</span>
+      <span>Made in {site.location}</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .inner {
+    display: flex;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+    padding-block: 48px 32px;
+  }
+  .left { max-width: 420px; display: grid; gap: 12px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 650; letter-spacing: -0.02em; }
+  .small { font-size: 0.925rem; line-height: 1.55; }
+  .links { display: flex; gap: 24px; font-size: 0.95rem; font-weight: 500; }
+  .links a { color: var(--muted); }
+  .links a:hover { color: var(--text); }
+  .base {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-block: 20px 32px;
+    border-top: 1px solid var(--line);
+    font-size: 0.85rem;
+    color: var(--faint);
+  }
+</style>

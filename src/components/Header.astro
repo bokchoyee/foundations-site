@@ -1,0 +1,64 @@
+---
+import Mark from './Mark.astro';
+import { site } from '../site';
+const path = Astro.url.pathname;
+---
+<header class="header">
+  <div class="wrap bar">
+    <a href="/" class="brand" aria-label={`${site.name} — home`}>
+      <Mark />
+      <span class="brand-name"><span class="the">The </span>Foundations Project</span>
+    </a>
+    <nav aria-label="Main">
+      {site.nav.map((item) => (
+        <a href={item.href} class:list={['nav-link', { active: path.startsWith(item.href) }]}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 50;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .bar {
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 650;
+    font-size: 1.02rem;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  nav { display: flex; gap: 4px; }
+  .nav-link {
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--muted);
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  .nav-link:hover { color: var(--text); background: var(--surface); }
+  .nav-link.active { color: var(--text); }
+
+  @media (max-width: 420px) {
+    .the { display: none; }
+    .nav-link { padding: 8px 10px; }
+  }
+</style>

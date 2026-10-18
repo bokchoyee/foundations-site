@@ -1,0 +1,224 @@
+---
+import Base from '../layouts/Base.astro';
+import PostCard from '../components/PostCard.astro';
+import ThemedList from '../components/ThemedList.astro';
+import { getPosts } from '../lib/posts';
+import { site, hero, startHere, quotes, partners, themes } from '../site';
+
+const posts = await getPosts();
+const themeCounts = themes
+  .map((t) => ({ ...t, count: posts.filter((p) => p.data.theme === t.id).length }))
+  .filter((t) => t.count > 0);
+const start = startHere
+  .map((id) => posts.find((p) => p.id === id))
+  .filter((p): p is NonNullable<typeof p> => Boolean(p));
+---
+<Base>
+  <section class="hero wrap">
+    <div class="hero-text">
+      <span class="eyebrow">{hero.eyebrow}</span>
+      <h1>{hero.headline}</h1>
+      <p class="lead">{hero.lead}</p>
+      <div class="actions">
+        <a href="#start" class="btn btn-primary">Start reading <span class="arrow">→</span></a>
+        <a href="/ideas/" class="btn btn-ghost">All ideas</a>
+      </div>
+      <p class="byline meta">By {site.author} · {site.location}</p>
+    </div>
+    <aside class="hero-card" aria-label={hero.questionLabel}>
+      <p class="card-label">{hero.questionLabel}</p>
+      <p class="question">{hero.question}</p>
+      <ul class="theme-links">
+        {themeCounts.map((t) => (
+          <li>
+            <a href={`/ideas/#theme-${t.id}`}>
+              <span>{t.label}</span>
+              <span class="count">{t.count}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  </section>
+
+  <section id="start" class="section wrap start">
+    <div class="head">
+      <h2 class="section-title">Start here</h2>
+      <p class="muted">Three good places to begin.</p>
+    </div>
+    <div class="cards">
+      {start.map((post, i) => <PostCard post={post} number={i + 1} />)}
+    </div>
+  </section>
+
+  <section class="section wrap">
+    <div class="head">
+      <h2 class="section-title">Every idea, by theme</h2>
+      <a href="/ideas/" class="link">Browse ideas <span class="arrow">→</span></a>
+    </div>
+    <ThemedList posts={posts} />
+  </section>
+
+  <section class="voices flush">
+    <div class="wrap">
+      <span class="eyebrow">What educators have said</span>
+      <div class="quotes">
+        {quotes.map((q) => (
+          <figure>
+            <blockquote>“{q.text}”</blockquote>
+            <figcaption><strong>{q.name}</strong> · {q.role}</figcaption>
+          </figure>
+        ))}
+      </div>
+      <div class="partners">
+        <p class="partners-head">{partners.heading}</p>
+        <ul>
+          {partners.names.map((n) => <li>{n}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding-top: clamp(56px, 10vw, 128px);
+    padding-bottom: clamp(48px, 7vw, 88px);
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(300px, 1fr);
+    gap: clamp(40px, 6vw, 88px);
+    align-items: end;
+  }
+  .hero-text {
+    display: grid;
+    gap: 28px;
+    justify-items: start;
+  }
+  .hero h1 {
+    font-size: clamp(2.75rem, 5.4vw, 4.75rem);
+    letter-spacing: -0.045em;
+    line-height: 0.98;
+    max-width: 13ch;
+  }
+  .hero-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: clamp(26px, 3vw, 36px);
+    display: grid;
+    gap: 18px;
+  }
+  .card-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .question {
+    font-family: var(--font-serif);
+    font-size: clamp(1.3rem, 1.9vw, 1.55rem);
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+  .theme-links {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .theme-links a {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.95rem;
+    font-weight: 550;
+    transition: color 0.15s ease;
+  }
+  .theme-links li:last-child a { border-bottom: 0; padding-bottom: 0; }
+  .theme-links a:hover { color: var(--accent); }
+  .count { color: var(--faint); font-variant-numeric: tabular-nums; font-weight: 500; }
+  .start { padding-top: 0; }
+  .lead {
+    font-size: clamp(1.125rem, 1.8vw, 1.35rem);
+    line-height: 1.55;
+    color: var(--muted);
+    max-width: 40rem;
+  }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+  .byline { margin-top: 8px; }
+
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: clamp(28px, 4vw, 44px);
+    padding-top: clamp(40px, 6vw, 64px);
+    border-top: 1px solid var(--line);
+  }
+  .link { font-weight: 600; font-size: 0.95rem; }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(24px, 3vw, 40px);
+  }
+
+  .voices {
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    padding-block: clamp(56px, 9vw, 104px);
+    margin-top: clamp(24px, 4vw, 48px);
+  }
+  .quotes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(28px, 5vw, 72px);
+    margin-top: 28px;
+  }
+  figure { margin: 0; display: grid; gap: 18px; align-content: start; }
+  blockquote {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: clamp(1.3rem, 2.2vw, 1.65rem);
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    text-wrap: pretty;
+  }
+  figcaption { font-size: 0.92rem; color: var(--muted); }
+  figcaption strong { color: var(--text); font-weight: 600; }
+
+  .partners {
+    margin-top: clamp(48px, 7vw, 80px);
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    gap: 16px 40px;
+    flex-wrap: wrap;
+    align-items: baseline;
+  }
+  .partners-head { font-size: 0.92rem; color: var(--muted); }
+  .partners ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 32px;
+    font-weight: 650;
+    font-size: 1.05rem;
+    letter-spacing: -0.015em;
+  }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; align-items: start; }
+    .cards { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .cards, .quotes { grid-template-columns: 1fr; }
+    .cards { gap: 44px; }
+  }
+</style>

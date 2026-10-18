@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Page not found">
+  <section class="wrap read box">
+    <span class="eyebrow">404</span>
+    <h1>This page doesn't exist.</h1>
+    <p class="muted">It may have moved when the site left Blogger.</p>
+    <div class="actions">
+      <a href="/ideas/" class="btn btn-primary">See all ideas</a>
+      <a href="/" class="btn btn-ghost">Home</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .box { padding-block: clamp(80px, 14vw, 160px) 0; display: grid; gap: 18px; justify-items: start; }
+  h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); letter-spacing: -0.04em; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+</style>

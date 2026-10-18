@@ -1,0 +1,196 @@
+---
+import { render } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getPosts, readingTime, themeLabel, formatDate, type Post } from '../../lib/posts';
+import { site } from '../../site';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post, all: posts } }));
+}
+
+interface Props { post: Post; all: Post[] }
+const { post, all } = Astro.props;
+const { Content } = await render(post);
+const { title, summary, date, theme, cover, coverAlt, questions } = post.data;
+
+// "Keep reading": same theme first, then the newest of the rest.
+const others = all.filter((p) => p.id !== post.id);
+const more = [
+  ...others.filter((p) => p.data.theme === theme),
+  ...others.filter((p) => p.data.theme !== theme),
+].slice(0, 3);
+
+const ogImage = cover ? (await getImage({ src: cover, width: 1200, format: 'jpg' })).src : undefined;
+---
+<Base title={title} description={summary} image={ogImage}>
+  <article>
+    <header class="wrap read top">
+      <a href="/ideas/" class="back"><span class="arrow-left">←</span> All ideas</a>
+      <span class="eyebrow">{themeLabel(theme)}</span>
+      <h1>{title}</h1>
+      <p class="meta byline">
+        <span>{site.author}</span>
+        <span aria-hidden="true">·</span>
+        <time datetime={date.toISOString()}>{formatDate(date)}</time>
+        <span aria-hidden="true">·</span>
+        <span>{readingTime(post)} min read</span>
+      </p>
+    </header>
+
+    {cover && (
+      <div class="wrap cover-wrap">
+        <Image
+          src={cover}
+          alt={coverAlt ?? ''}
+          widths={[720, 1080, 1440, 2000]}
+          sizes="(max-width: 1100px) 100vw, 1040px"
+          class="cover"
+          quality={78}
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>
+    )}
+
+    <div class="wrap read">
+      <div class="prose">
+        <Content />
+      </div>
+
+      {questions.length > 0 && (
+        <aside class="questions" aria-labelledby="q-title">
+          <h2 id="q-title">Questions to think about</h2>
+          <ol>
+            {questions.map((q) => <li>{q}</li>)}
+          </ol>
+        </aside>
+      )}
+
+      <aside class="about-box">
+        <p><strong>{site.name}</strong> — {site.description}</p>
+        <a href="/about/" class="about-link">About the project <span class="arrow">→</span></a>
+      </aside>
+    </div>
+  </article>
+
+  <section class="wrap more">
+    <h2 class="section-title">Keep reading</h2>
+    <div class="cards">
+      {more.map((p) => <PostCard post={p} />)}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .top {
+    padding-top: clamp(40px, 7vw, 88px);
+    display: grid;
+    gap: 18px;
+    justify-items: start;
+  }
+  .back {
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: clamp(12px, 3vw, 28px);
+  }
+  .back:hover { color: var(--text); }
+  h1 {
+    font-size: clamp(2.3rem, 5.6vw, 3.9rem);
+    letter-spacing: -0.04em;
+    line-height: 1.02;
+  }
+  .byline { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .cover-wrap {
+    max-width: calc(1040px + var(--gutter) * 2);
+    margin-top: clamp(32px, 5vw, 56px);
+  }
+  .cover-wrap :global(.cover) {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: calc(var(--radius) + 4px);
+    background: var(--surface);
+  }
+
+  .prose {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    line-height: 1.72;
+    letter-spacing: -0.003em;
+    margin-top: clamp(40px, 6vw, 64px);
+    font-optical-sizing: auto;
+  }
+  .prose :global(p + p) { margin-top: 1.35em; }
+  .prose :global(strong) { font-weight: 650; }
+  .prose :global(a) {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  .prose :global(h2) { font-size: 1.6rem; margin: 2em 0 0.6em; }
+  .prose :global(h3) { font-size: 1.3rem; margin: 1.8em 0 0.5em; }
+  .prose :global(ul), .prose :global(ol) { padding-left: 1.3em; margin: 1.2em 0; }
+  .prose :global(blockquote) {
+    margin: 1.6em 0;
+    padding-left: 1.1em;
+    border-left: 3px solid var(--accent);
+    color: var(--muted);
+  }
+
+  .questions {
+    margin-top: 56px;
+    padding: 28px 30px;
+    border-radius: var(--radius);
+    background: var(--accent-soft);
+  }
+  .questions h2 { font-size: 1.15rem; letter-spacing: -0.015em; }
+  .questions ol {
+    margin: 14px 0 0;
+    padding-left: 1.2em;
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    line-height: 1.6;
+    display: grid;
+    gap: 10px;
+  }
+
+  .about-box {
+    margin-top: 56px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 10px;
+    font-size: 0.98rem;
+    color: var(--muted);
+  }
+  .about-box strong { color: var(--text); font-weight: 600; }
+  .about-link { font-weight: 600; color: var(--text); font-size: 0.95rem; }
+
+  .more { margin-top: clamp(72px, 10vw, 120px); }
+  .more .section-title {
+    padding-top: clamp(40px, 6vw, 64px);
+    border-top: 1px solid var(--line);
+    margin-bottom: clamp(28px, 4vw, 44px);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(24px, 3vw, 40px);
+  }
+
+  @media (max-width: 900px) {
+    .cards { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .prose { font-size: 1.125rem; line-height: 1.7; }
+    .cards { grid-template-columns: 1fr; gap: 44px; }
+    .cover-wrap { padding-inline: 0; }
+    .cover-wrap :global(.cover) { border-radius: 0; aspect-ratio: 3 / 2; }
+  }
+</style>
