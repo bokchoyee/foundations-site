@@ -1,89 +1,157 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import { site, about, partners, quotes } from '../site';
+import Backdrop from '../components/Backdrop.astro';
+import { aboutMe, contact, postPage, site } from '../site';
+import { postImage, assetImage } from '../lib/images';
+import { isPlaceholder, hasText } from '../lib/text';
+
+const photo = assetImage(aboutMe.photo);
 ---
-<Base title="About" description={about.whyThisExists}>
-  <section class="wrap read top">
-    <span class="eyebrow">About</span>
-    <h1>Why this exists</h1>
-    <p class="big">{about.whyThisExists}</p>
+<Base title={aboutMe.title} description={aboutMe.subheading}>
+  <section class="intro-band has-backdrop">
+    <Backdrop src={postImage(site.backdrop)} />
+    <div class:list={['wrap', 'intro', { 'with-photo': photo }]}>
+      <div class="intro-text">
+        <span class="eyebrow">{aboutMe.title}</span>
+        <h1>{aboutMe.heading}</h1>
+        <p class:list={['lead', { placeholder: isPlaceholder(aboutMe.subheading) }]}>{aboutMe.subheading}</p>
+      </div>
+      {photo && (
+        <div class="portrait">
+          <Image src={photo} alt={aboutMe.photoAlt} widths={[360, 540, 720]} sizes="(max-width: 760px) 70vw, 360px" quality={82} loading="eager" />
+        </div>
+      )}
+    </div>
   </section>
 
-  <section class="wrap read"><div class="block">
-    <h2>What makes this different</h2>
-    {about.whatMakesThisDifferent.map((p) => <p>{p}</p>)}
-  </div></section>
+  <div class="wrap read body">
+    <section class="bio">
+      {aboutMe.bio.map((p) => <p class:list={[{ placeholder: isPlaceholder(p) }]}>{p}</p>)}
+    </section>
 
-  <section class="wrap read"><div class="block">
-    <h2>Who's behind it</h2>
-    <p>The Foundations Project is written by {site.author} in {site.location}.</p>
-  </div></section>
+    {hasText(aboutMe.why) && (
+      <section class="block">
+        <h2>{aboutMe.whyHeading}</h2>
+        {aboutMe.why.map((p) => <p class:list={[{ placeholder: isPlaceholder(p) }]}>{p}</p>)}
+      </section>
+    )}
 
-  <section class="wrap read"><div class="block">
-    <h2>{partners.heading}</h2>
-    <ul class="names">
-      {partners.names.map((n) => <li>{n}</li>)}
-    </ul>
-  </div></section>
+    {hasText(aboutMe.now) && (
+      <section class="block">
+        <h2>{aboutMe.nowHeading}</h2>
+        {aboutMe.now.map((p) => <p class:list={[{ placeholder: isPlaceholder(p) }]}>{p}</p>)}
+      </section>
+    )}
 
-  <section class="wrap read"><div class="block">
-    <h2>What educators have said</h2>
-    {quotes.map((q) => (
-      <figure>
-        <blockquote>“{q.text}”</blockquote>
-        <figcaption><strong>{q.name}</strong> · {q.role}</figcaption>
-      </figure>
-    ))}
-  </div></section>
+    {aboutMe.interests.length > 0 && (
+      <section class="block">
+        <h2>{aboutMe.interestsHeading}</h2>
+        <ul class="chips">
+          {aboutMe.interests.map((i) => <li>{i}</li>)}
+        </ul>
+      </section>
+    )}
+
+    {aboutMe.links.length > 0 && (
+      <section class="block">
+        <ul class="links">
+          {aboutMe.links.map((l) => (
+            <li><a href={l.url} target="_blank" rel="noopener">{l.label} <span class="arrow">↗</span></a></li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <div class="actions">
+      <a href="/contact/" class="btn btn-primary">{contact.heading} <span class="arrow">→</span></a>
+      <a href="/mission/" class="btn btn-ghost">{postPage.missionLink}</a>
+    </div>
+  </div>
 </Base>
 
 <style>
-  .top {
+  .intro-band { overflow: hidden; }
+  .intro {
     padding-top: clamp(56px, 9vw, 112px);
+    padding-bottom: clamp(40px, 6vw, 72px);
+    max-width: calc(var(--read) + var(--gutter) * 2);
+  }
+  .intro.with-photo {
+    max-width: calc(var(--wide) + var(--gutter) * 2);
     display: grid;
-    gap: 20px;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 360px);
+    gap: clamp(32px, 6vw, 80px);
+    align-items: end;
   }
+  .intro-text { display: grid; gap: 20px; justify-items: start; min-width: 0; }
   h1 {
-    font-size: clamp(2.5rem, 6vw, 4.25rem);
-    letter-spacing: -0.04em;
-    line-height: 1;
+    font-size: clamp(2.75rem, 7vw, 5rem);
+    letter-spacing: -0.045em;
+    line-height: 0.98;
   }
-  .big {
+  .lead {
+    font-size: clamp(1.15rem, 1.8vw, 1.35rem);
+    color: var(--muted);
+    max-width: 36rem;
+  }
+  .portrait {
+    border-radius: 24px;
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+    max-width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .portrait :global(img) { width: 100%; height: 100%; object-fit: cover; }
+
+  .body { display: grid; }
+  .bio { display: grid; gap: 1.1em; }
+  .bio p {
     font-family: var(--font-serif);
-    font-size: clamp(1.35rem, 2.4vw, 1.75rem);
-    line-height: 1.45;
-    letter-spacing: -0.01em;
+    font-size: 1.3rem;
+    line-height: 1.65;
   }
   .block {
-    margin-top: clamp(48px, 7vw, 80px);
-    padding-top: 32px;
+    margin-top: clamp(40px, 6vw, 56px);
+    padding-top: 28px;
     border-top: 1px solid var(--line);
     display: grid;
-    gap: 16px;
+    gap: 14px;
   }
-  .block h2 { font-size: 1.35rem; letter-spacing: -0.02em; }
+  .block h2 { font-size: 1.3rem; letter-spacing: -0.02em; }
   .block p {
     font-family: var(--font-serif);
     font-size: 1.2rem;
     line-height: 1.7;
   }
-  .names {
+  .chips {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
     gap: 8px;
-    font-size: 1.15rem;
-    font-weight: 600;
-    letter-spacing: -0.015em;
   }
-  figure { margin: 8px 0 0; display: grid; gap: 10px; }
-  blockquote {
-    margin: 0;
-    font-family: var(--font-serif);
-    font-size: 1.25rem;
-    line-height: 1.5;
+  .chips li {
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    font-size: 0.95rem;
+    font-weight: 500;
   }
-  figcaption { font-size: 0.92rem; color: var(--muted); }
-  figcaption strong { color: var(--text); font-weight: 600; }
+  .links { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px 24px; font-weight: 600; }
+  .links a:hover { color: var(--accent); }
+  .actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: clamp(48px, 7vw, 72px);
+  }
+
+  @media (max-width: 760px) {
+    .intro.with-photo { grid-template-columns: 1fr; }
+    .portrait { width: 180px; max-width: 100%; border-radius: 20px; order: -1; }
+  }
 </style>

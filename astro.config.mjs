@@ -1,8 +1,9 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 
-// When the site has its real address, put it here (used for social previews).
 export default defineConfig({
-  // site: 'https://your-domain.com',
+  // The site's web address. Used for link previews when someone shares a page.
+  // Change this when you get your own domain.
+  site: 'https://foundationsproject-site.b-borjiet.workers.dev',
   trailingSlash: 'ignore',
 });

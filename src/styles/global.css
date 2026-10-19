@@ -13,6 +13,10 @@
   --surface: #f6f5f2;
   --accent: #c2410c;       /* burnt orange — change this one line to recolour the site */
   --accent-soft: #fdf1ea;
+  --glass: rgba(255, 255, 255, 0.62);   /* see-through cards over the background photo */
+  --backdrop-opacity: 0.55;             /* how strong the blurred photo is */
+  --moon-display: block;                /* which icon the light/dark switch shows */
+  --sun-display: none;
 
   /* Fonts */
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -27,8 +31,7 @@
   color-scheme: light;
 }
 
-/* Dark mode follows the reader's device setting.
-   (The data-theme lines let a future light/dark switch override it.) */
+/* Dark mode: follows the reader's device setting until they use the light/dark switch. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0d0d0f;
@@ -39,6 +42,10 @@
     --surface: #151518;
     --accent: #ff7a45;
     --accent-soft: #2a1710;
+    --glass: rgba(21, 21, 24, 0.58);
+    --backdrop-opacity: 0.42;
+    --moon-display: none;
+    --sun-display: block;
     color-scheme: dark;
   }
 }
@@ -51,6 +58,10 @@
   --surface: #151518;
   --accent: #ff7a45;
   --accent-soft: #2a1710;
+  --glass: rgba(21, 21, 24, 0.58);
+  --backdrop-opacity: 0.42;
+  --moon-display: none;
+  --sun-display: block;
   color-scheme: dark;
 }
 
@@ -132,6 +143,16 @@ main:has(> .flush:last-child) { padding-bottom: 0; }
 .section + .section { padding-top: 0; }
 
 .rule { border: 0; border-top: 1px solid var(--line); margin: 0; }
+
+/* A section with a blurred photo behind it (see components/Backdrop.astro) */
+.has-backdrop { position: relative; isolation: isolate; }
+
+/* Text still to be written (anything starting with "[") */
+.placeholder {
+  color: var(--faint);
+  font-style: italic;
+  border-bottom: 1px dashed var(--line);
+}
 
 /* ── Type ─────────────────────────────────── */
 

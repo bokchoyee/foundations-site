@@ -46,6 +46,18 @@ That means the site should be:
 
 | Page | What's on it |
 |---|---|
+| **Home** | What this is in one sentence, a "Start here" path (3 posts), and the posts grouped by theme |
+| **Ideas** | Every post, grouped by theme |
+| **Each post** | Comfortable to read on a phone, reading time at the top, 2–3 questions to think about at the end, and links to related posts |
+| **Mission** | Why the project exists, what makes it different, who it's for, and the organizations that have listed or shared it (including a proper note about BCCESS) |
+| **About** | About Boke: who he is, why he started the project, what he's working on |
+| **Contact** | Feedback, partnerships and workshops, a contact form (messages go to Boke's email through Web3Forms), and his email address |
+| **BCCESS** | A small page about BCCESS (who they are, what they offer, how we're connected), as they asked. Facts from bccess.ca |
+| **Use it** | *Comes after the Nov 7 workshop.* Tools and plans people can use without attending. This page doesn't go up until there's something real on it. |
+
+Every page has a light/dark switch, and the top of the main pages sits on a soft, blurred photo.
+
+---|---|
 | **Home** | What this is in one sentence, a "Start here" path (2–3 posts), and the posts grouped by theme |
 | **Ideas** | Every post, grouped by theme |
 | **Each post** | Comfortable to read on a phone, reading time at the top, 2–3 questions to think about at the end, and links to related posts |
@@ -95,7 +107,9 @@ Bring over every post with its original date, make every page, and check it all 
 About page, "Start here" picks, theme groups, and the end-of-post questions. This is the biggest chunk of actual work, and it has to be in Boke's voice, so nobody else writes it.
 
 **5. Launch**
-Put it live on Cloudflare, sort out the web address, make the old Blogger links forward, click every link to check it, then email partners the new link along with a real update on what's new.
+Sort out the web address (and update `site` in `astro.config.mjs` if it changes), switch `hideFromSearch` to `false` in `src/site.ts` so Google can find the site, make the old Blogger links forward, click every link to check it, then email partners the new link along with a real update on what's new.
+
+*Progress: the site is already live on Cloudflare as a draft (hidden from search) at foundationsproject-site.b-borjiet.workers.dev.*
 
 **6. After Nov 7**
 Add the "Use it" section with tools from the workshop. Maybe add a small "Was this useful? What was confusing?" box at the end of posts, so we get real feedback from readers. That's the one place a database (Supabase) would make sense.

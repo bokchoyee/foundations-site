@@ -3,8 +3,9 @@ import { render } from 'astro:content';
 import { Image, getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import PostCard from '../../components/PostCard.astro';
+import Backdrop from '../../components/Backdrop.astro';
 import { getPosts, readingTime, themeLabel, formatDate, type Post } from '../../lib/posts';
-import { site } from '../../site';
+import { site, postPage } from '../../site';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -27,8 +28,10 @@ const ogImage = cover ? (await getImage({ src: cover, width: 1200, format: 'jpg'
 ---
 <Base title={title} description={summary} image={ogImage}>
   <article>
+    <div class="post-head has-backdrop">
+    <Backdrop src={cover} />
     <header class="wrap read top">
-      <a href="/ideas/" class="back"><span class="arrow-left">←</span> All ideas</a>
+      <a href="/ideas/" class="back"><span class="arrow-left">←</span> {postPage.backLink}</a>
       <span class="eyebrow">{themeLabel(theme)}</span>
       <h1>{title}</h1>
       <p class="meta byline">
@@ -39,6 +42,7 @@ const ogImage = cover ? (await getImage({ src: cover, width: 1200, format: 'jpg'
         <span>{readingTime(post)} min read</span>
       </p>
     </header>
+    </div>
 
     {cover && (
       <div class="wrap cover-wrap">
@@ -62,7 +66,7 @@ const ogImage = cover ? (await getImage({ src: cover, width: 1200, format: 'jpg'
 
       {questions.length > 0 && (
         <aside class="questions" aria-labelledby="q-title">
-          <h2 id="q-title">Questions to think about</h2>
+          <h2 id="q-title">{postPage.questionsHeading}</h2>
           <ol>
             {questions.map((q) => <li>{q}</li>)}
           </ol>
@@ -71,13 +75,13 @@ const ogImage = cover ? (await getImage({ src: cover, width: 1200, format: 'jpg'
 
       <aside class="about-box">
         <p><strong>{site.name}</strong> — {site.description}</p>
-        <a href="/about/" class="about-link">About the project <span class="arrow">→</span></a>
+        <a href="/mission/" class="about-link">{postPage.missionLink} <span class="arrow">→</span></a>
       </aside>
     </div>
   </article>
 
   <section class="wrap more">
-    <h2 class="section-title">Keep reading</h2>
+    <h2 class="section-title">{postPage.moreHeading}</h2>
     <div class="cards">
       {more.map((p) => <PostCard post={p} />)}
     </div>
@@ -85,6 +89,7 @@ const ogImage = cover ? (await getImage({ src: cover, width: 1200, format: 'jpg'
 </Base>
 
 <style>
+  .post-head { overflow: hidden; }
   .top {
     padding-top: clamp(40px, 7vw, 88px);
     display: grid;

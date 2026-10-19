@@ -1,14 +1,15 @@
 ---
 import Base from '../layouts/Base.astro';
+import { notFound } from '../site';
 ---
 <Base title="Page not found">
   <section class="wrap read box">
     <span class="eyebrow">404</span>
-    <h1>This page doesn't exist.</h1>
-    <p class="muted">It may have moved when the site left Blogger.</p>
+    <h1>{notFound.heading}</h1>
+    <p class="muted">{notFound.line}</p>
     <div class="actions">
-      <a href="/ideas/" class="btn btn-primary">See all ideas</a>
-      <a href="/" class="btn btn-ghost">Home</a>
+      <a href="/ideas/" class="btn btn-primary">{notFound.primary}</a>
+      <a href="/" class="btn btn-ghost">{notFound.secondary}</a>
     </div>
   </section>
 </Base>

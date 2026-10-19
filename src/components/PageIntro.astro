@@ -1,0 +1,55 @@
+---
+// The top of a page: small label, big heading, optional intro line, blurred photo behind.
+import Backdrop from './Backdrop.astro';
+import { postImage } from '../lib/images';
+import { isPlaceholder } from '../lib/text';
+import { site } from '../site';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  narrow?: boolean;
+  /** 'statement' sets the heading as a large serif sentence instead of a short title */
+  variant?: 'title' | 'statement';
+}
+const { eyebrow, title, lead, narrow = false, variant = 'title' } = Astro.props;
+---
+<section class="intro-band has-backdrop">
+  <Backdrop src={postImage(site.backdrop)} />
+  <div class:list={['wrap', 'intro', { read: narrow }]}>
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+    <h1 class:list={[{ statement: variant === 'statement' }]}>{title}</h1>
+    {lead && <p class:list={['lead', { placeholder: isPlaceholder(lead) }]}>{lead}</p>}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .intro-band { overflow: hidden; }
+  .intro {
+    padding-top: clamp(56px, 9vw, 112px);
+    padding-bottom: clamp(40px, 6vw, 72px);
+    display: grid;
+    gap: 20px;
+    justify-items: start;
+  }
+  h1 {
+    font-size: clamp(2.5rem, 6vw, 4.25rem);
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  h1.statement {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(1.75rem, 3.6vw, 2.6rem);
+    line-height: 1.28;
+    letter-spacing: -0.015em;
+    text-wrap: pretty;
+  }
+  .lead {
+    font-size: clamp(1.1rem, 1.6vw, 1.25rem);
+    color: var(--muted);
+    max-width: 38rem;
+  }
+</style>

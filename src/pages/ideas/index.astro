@@ -1,37 +1,15 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PageIntro from '../../components/PageIntro.astro';
 import ThemedList from '../../components/ThemedList.astro';
 import { getPosts } from '../../lib/posts';
-import { site } from '../../site';
+import { ideasPage } from '../../site';
 
 const posts = await getPosts();
 ---
-<Base title="Ideas" description={site.description}>
-  <section class="intro wrap">
-    <span class="eyebrow">Ideas</span>
-    <h1>Every idea, by theme</h1>
-    <p class="lead">{site.description}</p>
-  </section>
+<Base title="Ideas" description={ideasPage.intro}>
+  <PageIntro eyebrow="Ideas" title={ideasPage.heading} lead={ideasPage.intro} />
   <section class="wrap">
     <ThemedList posts={posts} />
   </section>
 </Base>
-
-<style>
-  .intro {
-    padding-top: clamp(56px, 9vw, 112px);
-    padding-bottom: clamp(40px, 6vw, 72px);
-    display: grid;
-    gap: 20px;
-  }
-  h1 {
-    font-size: clamp(2.5rem, 6vw, 4.25rem);
-    letter-spacing: -0.04em;
-    line-height: 1;
-  }
-  .lead {
-    font-size: clamp(1.1rem, 1.6vw, 1.25rem);
-    color: var(--muted);
-    max-width: 38rem;
-  }
-</style>

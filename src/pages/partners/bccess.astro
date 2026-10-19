@@ -1,0 +1,114 @@
+---
+import Base from '../../layouts/Base.astro';
+import Backdrop from '../../components/Backdrop.astro';
+import { postImage } from '../../lib/images';
+import { site, bccess } from '../../site';
+---
+<Base title={bccess.name} description={bccess.summary}>
+  <section class="spot has-backdrop">
+    <Backdrop src={postImage(site.backdrop)} />
+    <div class="wrap">
+      <article class="window">
+        <a href="/mission/" class="back"><span>←</span> {bccess.backLink}</a>
+
+        <header class="top">
+          <span class="eyebrow">{bccess.eyebrow}</span>
+          <h1>{bccess.name}</h1>
+          <p class="full-name">{bccess.fullName}</p>
+        </header>
+
+        <p class="tagline">“{bccess.tagline}”</p>
+        <p class="summary">{bccess.summary}</p>
+
+        <section class="offers">
+          <h2>{bccess.offersHeading}</h2>
+          <ul>
+            {bccess.offers.map((o) => <li>{o}</li>)}
+          </ul>
+        </section>
+
+        <section class="connection">
+          <h2>{bccess.connectionHeading}</h2>
+          <p>{bccess.connection}</p>
+        </section>
+
+        <div class="actions">
+          <a href={bccess.primaryUrl} target="_blank" rel="noopener" class="btn btn-primary">{bccess.primaryButton} <span class="arrow">↗</span></a>
+          <a href={bccess.secondaryUrl} target="_blank" rel="noopener" class="btn btn-ghost">{bccess.secondaryButton}</a>
+        </div>
+
+        <p class="source meta">{bccess.sourceNote}</p>
+      </article>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .spot {
+    overflow: hidden;
+    padding-block: clamp(40px, 8vw, 104px) 0;
+  }
+  .window {
+    max-width: 720px;
+    margin-inline: auto;
+    display: grid;
+    gap: 22px;
+    padding: clamp(24px, 4.5vw, 48px);
+    border-radius: 26px;
+    border: 1px solid var(--line);
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(22px) saturate(1.2);
+    backdrop-filter: blur(22px) saturate(1.2);
+    box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.35);
+  }
+  .back { font-size: 0.92rem; font-weight: 500; color: var(--muted); justify-self: start; }
+  .back:hover { color: var(--text); }
+  .top { display: grid; gap: 10px; }
+  h1 {
+    font-size: clamp(2.6rem, 7vw, 4rem);
+    letter-spacing: -0.045em;
+    line-height: 1;
+  }
+  .full-name { color: var(--muted); font-size: 1.05rem; font-weight: 500; }
+  .tagline {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.3rem, 2.6vw, 1.6rem);
+    line-height: 1.35;
+    color: var(--accent);
+  }
+  .summary {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    line-height: 1.65;
+  }
+  h2 { font-size: 1.1rem; letter-spacing: -0.015em; }
+  .offers { display: grid; gap: 12px; padding-top: 22px; border-top: 1px solid var(--line); }
+  .offers ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .offers li {
+    position: relative;
+    padding-left: 22px;
+    font-size: 1.02rem;
+    line-height: 1.55;
+  }
+  .offers li::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 0.62em;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+  .connection {
+    display: grid;
+    gap: 8px;
+    padding: 18px 20px;
+    border-radius: 16px;
+    background: var(--accent-soft);
+  }
+  .connection p { font-size: 1rem; line-height: 1.55; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .source { font-size: 0.82rem; }
+</style>

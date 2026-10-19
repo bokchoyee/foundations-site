@@ -14,22 +14,35 @@ interface Props {
 }
 const { title, description = site.description, image } = Astro.props;
 const fullTitle = title ? `${title} — ${site.name}` : `${site.name}: ${site.subtitle}`;
+// Social previews need full web addresses, built from `site` in astro.config.mjs.
+const pageUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+const imageUrl = image && Astro.site ? new URL(image, Astro.site).href : image;
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      // Apply a saved light/dark choice before the page draws, so it never flashes.
+      try {
+        var savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light' || savedTheme === 'dark') document.documentElement.setAttribute('data-theme', savedTheme);
+      } catch (e) {}
+    </script>
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <meta name="author" content={site.author} />
+    {site.hideFromSearch && <meta name="robots" content="noindex, nofollow" />}
+    {pageUrl && <link rel="canonical" href={pageUrl} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0d0d0f" media="(prefers-color-scheme: dark)" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    {image && <meta property="og:image" content={image} />}
+    {pageUrl && <meta property="og:url" content={pageUrl} />}
+    {imageUrl && <meta property="og:image" content={imageUrl} />}
     <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>

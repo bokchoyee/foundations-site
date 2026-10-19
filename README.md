@@ -10,13 +10,14 @@ The full plan is in [`docs/SITE_PLAN.md`](docs/SITE_PLAN.md).
 
 | You want to… | Go to |
 |---|---|
+| Change any words on the site (home, Mission, About, Contact, menus, buttons) | `src/site.ts` |
 | Edit a post | `src/content/posts/` (one `.md` file per post) |
-| Change the words on the home page, About page, themes or "Start here" picks | `src/site.ts` |
-| Change colours or fonts | the top of `src/styles/global.css` |
+| Change colours, fonts or how strong the blurred photo is | the top of `src/styles/global.css` |
 | Swap a post's photo | `src/assets/posts/` |
+| Add a photo of you | put it in `src/assets/` and write its file name in `aboutMe.photo` in `src/site.ts` |
 | Change a page's layout | `src/pages/` |
 
-Anything marked **DRAFT** in `src/site.ts` was filled in to make the site look finished. Rewrite it in your own words before launch.
+Anything marked **DRAFT** in `src/site.ts` was filled in to make the site look finished, and anything in [square brackets] still needs writing. Rewrite both in your own words before launch.
 
 ---
 
@@ -56,17 +57,21 @@ The page refreshes on its own every time you save a file.
 
 ---
 
-## Putting it online (Cloudflare)
+## How changes go live
 
-1. Make a free account at [cloudflare.com](https://cloudflare.com).
-2. Go to **Workers & Pages → Create → Pages → Connect to Git** and pick this repo.
-3. Use these settings:
-   - Framework preset: **Astro**
-   - Build command: `npm run build`
-   - Output directory: `dist`
-4. Click **Deploy**.
+You only ever update GitHub. Cloudflare watches this repo, and every push rebuilds the site by itself in a minute or two.
 
-After that, every time you push to GitHub, the site updates by itself in about a minute.
+**Editing on your computer** (the usual way):
+
+1. Change a file in this folder and save it.
+2. In GitHub Desktop, write a short note in **Summary**, click **Commit to main**, then **Push origin**.
+
+**Editing on github.com** (handy for a quick typo fix, even from your phone):
+
+1. Open the file on github.com, click the pencil icon, make the change, and click **Commit changes**.
+2. Next time you're in GitHub Desktop, click **Fetch origin**, then **Pull origin**, before you edit anything on your computer. That brings your computer's copy up to date.
+
+If a build ever fails, the live site stays on the last version that worked. You can see each build under your project in the Cloudflare dashboard.
 
 ---
 

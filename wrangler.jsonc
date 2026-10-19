@@ -1,0 +1,11 @@
+// Cloudflare settings. You shouldn't need to touch this.
+// "name" must match the project name in your Cloudflare dashboard.
+{
+  "name": "foundationsproject-site",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    // Show the site's own "page not found" page for addresses that don't exist
+    "not_found_handling": "404-page"
+  }
+}

@@ -1,7 +1,9 @@
 ---
 import Mark from './Mark.astro';
+import ThemeToggle from './ThemeToggle.astro';
 import { site } from '../site';
 const path = Astro.url.pathname;
+const isActive = (href: string) => path.startsWith(href);
 ---
 <header class="header">
   <div class="wrap bar">
@@ -9,24 +11,47 @@ const path = Astro.url.pathname;
       <Mark />
       <span class="brand-name"><span class="the">The </span>Foundations Project</span>
     </a>
-    <nav aria-label="Main">
-      {site.nav.map((item) => (
-        <a href={item.href} class:list={['nav-link', { active: path.startsWith(item.href) }]}>
-          {item.label}
-        </a>
-      ))}
-    </nav>
+    <div class="right">
+      <nav aria-label="Main" class="nav-desktop">
+        {site.nav.map((item) => (
+          <a href={item.href} class:list={['nav-link', { active: isActive(item.href) }]}>{item.label}</a>
+        ))}
+      </nav>
+      <ThemeToggle />
+      <details class="menu">
+        <summary aria-label="Open menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+          <span>Menu</span>
+        </summary>
+        <nav aria-label="Menu" class="menu-panel">
+          {site.nav.map((item) => (
+            <a href={item.href} class:list={['menu-link', { active: isActive(item.href) }]}>{item.label}</a>
+          ))}
+        </nav>
+      </details>
+    </div>
   </div>
 </header>
+
+<script is:inline>
+  // Close the phone menu when tapping anywhere else.
+  document.addEventListener('click', function (event) {
+    document.querySelectorAll('details.menu[open]').forEach(function (menu) {
+      if (!menu.contains(event.target)) menu.removeAttribute('open');
+    });
+  });
+</script>
 
 <style>
   .header {
     position: sticky;
     top: env(safe-area-inset-top, 0px);
     z-index: 50;
-    background: color-mix(in srgb, var(--bg) 82%, transparent);
-    backdrop-filter: saturate(180%) blur(14px);
-    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    background: color-mix(in srgb, var(--bg) 78%, transparent);
+    backdrop-filter: saturate(180%) blur(16px);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
     border-bottom: 1px solid var(--line);
   }
   .bar {
@@ -45,7 +70,8 @@ const path = Astro.url.pathname;
     letter-spacing: -0.02em;
     white-space: nowrap;
   }
-  nav { display: flex; gap: 4px; }
+  .right { display: flex; align-items: center; gap: 8px; }
+  .nav-desktop { display: flex; gap: 2px; margin-right: 6px; }
   .nav-link {
     padding: 8px 14px;
     border-radius: 999px;
@@ -57,8 +83,49 @@ const path = Astro.url.pathname;
   .nav-link:hover { color: var(--text); background: var(--surface); }
   .nav-link.active { color: var(--text); }
 
+  .menu { display: none; position: relative; }
+  .menu summary {
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    font-size: 0.92rem;
+    font-weight: 550;
+    cursor: pointer;
+    user-select: none;
+  }
+  .menu summary::-webkit-details-marker { display: none; }
+  .menu[open] summary { border-color: var(--text); }
+  .menu-panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+    min-width: 210px;
+    display: grid;
+    gap: 2px;
+    padding: 8px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.35);
+  }
+  .menu-link {
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 550;
+  }
+  .menu-link:hover, .menu-link.active { background: var(--surface); }
+
+  @media (max-width: 760px) {
+    .nav-desktop { display: none; }
+    .menu { display: block; }
+  }
   @media (max-width: 420px) {
     .the { display: none; }
-    .nav-link { padding: 8px 10px; }
   }
 </style>

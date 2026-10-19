@@ -1,0 +1,92 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import { mission, partners, quotes, home } from '../site';
+import { isPlaceholder, hasText } from '../lib/text';
+
+const shownQuotes = quotes.filter((q) => q.keep);
+---
+<Base title={mission.title} description={mission.statement}>
+  <PageIntro eyebrow={mission.title} title={mission.statement} variant="statement" narrow />
+
+  <div class="wrap read body">
+    <section class="block">
+      <h2>{mission.differentHeading}</h2>
+      {mission.different.map((p) => <p>{p}</p>)}
+    </section>
+
+    {hasText(mission.whoFor) && (
+      <section class="block">
+        <h2>{mission.whoForHeading}</h2>
+        <p class:list={[{ placeholder: isPlaceholder(mission.whoFor) }]}>{mission.whoFor}</p>
+      </section>
+    )}
+
+    <section class="block">
+      <h2>{partners.heading}</h2>
+      <ul class="orgs">
+        {partners.list.map((o) => (
+          <li>
+            {o.page
+              ? <a href={o.page} class="org-name">{o.name} <span class="arrow">→</span></a>
+              : o.url
+                ? <a href={o.url} target="_blank" rel="noopener" class="org-name">{o.name} <span class="arrow">↗</span></a>
+                : <span class="org-name">{o.name}</span>}
+            {hasText(o.about) && <span class:list={['org-about', { placeholder: isPlaceholder(o.about) }]}>{o.about}</span>}
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    {shownQuotes.length > 0 && (
+      <section class="block">
+        <h2>{home.quotesLabel}</h2>
+        {shownQuotes.map((q) => (
+          <figure>
+            <blockquote>“{q.text}”</blockquote>
+            <figcaption><strong>{q.name}</strong> · {q.role}{q.school && <>, {q.school}</>}</figcaption>
+          </figure>
+        ))}
+      </section>
+    )}
+
+    <section class="block author">
+      <p>{mission.authorLine}</p>
+      <a href="/about/" class="author-link">{mission.authorLink} <span class="arrow">→</span></a>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .body { display: grid; }
+  .block {
+    margin-top: clamp(40px, 6vw, 64px);
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 16px;
+  }
+  .block:first-child { margin-top: 0; }
+  .block h2 { font-size: 1.35rem; letter-spacing: -0.02em; }
+  .block p {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    line-height: 1.7;
+  }
+  .orgs { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .orgs li { display: grid; gap: 2px; }
+  .org-name { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.015em; }
+  a.org-name:hover { color: var(--accent); }
+  .org-about { color: var(--muted); font-size: 1rem; }
+  figure { margin: 8px 0 0; display: grid; gap: 10px; }
+  blockquote {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    line-height: 1.5;
+  }
+  figcaption { font-size: 0.92rem; color: var(--muted); }
+  figcaption strong { color: var(--text); font-weight: 600; }
+  .author p { font-family: var(--font-sans); font-size: 1rem; color: var(--muted); }
+  .author-link { font-weight: 600; }
+</style>

@@ -1,0 +1,266 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import { contact, site } from '../site';
+import { hasText } from '../lib/text';
+
+const hasEmail = hasText(contact.email);
+const formReady = hasText(contact.formAccessKey);
+---
+<Base title={contact.title} description={contact.intro}>
+  <PageIntro eyebrow={contact.title} title={contact.heading} lead={contact.intro} />
+
+  <div class="wrap body">
+    <div class="cards">
+      <section class="card">
+        <h2>{contact.feedbackTitle}</h2>
+        <p>{contact.feedbackText}</p>
+      </section>
+      <section class="card">
+        <h2>{contact.partnersTitle}</h2>
+        <p>{contact.partnersText}</p>
+      </section>
+    </div>
+
+    <section class="form-wrap" aria-labelledby="form-title">
+      <div class="form-intro">
+        <h2 id="form-title">{contact.formHeading}</h2>
+        <p class="muted">{contact.formNote}</p>
+      </div>
+
+      <form
+        class="contact-form"
+        action="https://api.web3forms.com/submit"
+        method="POST"
+        data-ready={formReady ? 'true' : 'false'}
+        data-sending={contact.sendingLabel}
+        data-success={contact.successMessage}
+        data-error={contact.errorMessage}
+        data-not-ready={contact.notReadyMessage}
+      >
+        <input type="hidden" name="access_key" value={contact.formAccessKey} />
+        <input type="hidden" name="subject" value={`New message from ${site.name}`} />
+        <input type="hidden" name="from_name" value={site.name} />
+        <!-- catches spam bots; people never see it -->
+        <input type="checkbox" name="botcheck" class="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+        <div class="row-2">
+          <label class="field">
+            <span>{contact.nameLabel}</span>
+            <input id="contact-name" type="text" name="name" autocomplete="name" required />
+          </label>
+          <label class="field">
+            <span>{contact.emailFieldLabel}</span>
+            <input id="contact-email" type="email" name="email" autocomplete="email" required />
+          </label>
+        </div>
+
+        <label class="field">
+          <span>{contact.topicLabel}</span>
+          <select id="contact-topic" name="topic">
+            {contact.topics.map((t) => <option value={t}>{t}</option>)}
+          </select>
+        </label>
+
+        <label class="field">
+          <span>{contact.messageLabel}</span>
+          <textarea id="contact-message" name="message" rows="6" required></textarea>
+        </label>
+
+        <div class="submit-row">
+          <button type="submit" class="btn btn-primary">{contact.submitLabel}</button>
+          <p class="status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </section>
+
+    <section class="reach">
+      <p class="reach-label">{contact.orEmail}</p>
+      {hasEmail ? (
+        <div class="email-row">
+          <a href={`mailto:${contact.email}`} class="email">{contact.email}</a>
+          <button type="button" class="copy btn btn-ghost" data-email={contact.email}>{contact.copyLabel}</button>
+        </div>
+      ) : (
+        <p class="email placeholder">[the address you want public]</p>
+      )}
+
+      {contact.links.length > 0 && (
+        <ul class="links">
+          {contact.links.map((l) => (
+            <li><a href={l.url} target="_blank" rel="noopener">{l.label} <span class="arrow">↗</span></a></li>
+          ))}
+        </ul>
+      )}
+    </section>
+  </div>
+</Base>
+
+<script is:inline>
+  // Contact form: sends in the background and shows a message on the page.
+  document.addEventListener('submit', function (event) {
+    var form = event.target;
+    if (!form.classList || !form.classList.contains('contact-form')) return;
+    event.preventDefault();
+    var status = form.querySelector('.status');
+    var button = form.querySelector('button[type="submit"]');
+    status.className = 'status';
+    if (form.getAttribute('data-ready') !== 'true') {
+      status.textContent = form.getAttribute('data-not-ready');
+      status.classList.add('is-error');
+      return;
+    }
+    var original = button.textContent;
+    button.disabled = true;
+    button.textContent = form.getAttribute('data-sending');
+    status.textContent = '';
+    var data = Object.fromEntries(new FormData(form));
+    fetch(form.action, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(data)
+    })
+      .then(function (response) { return response.json(); })
+      .then(function (result) {
+        if (result && result.success) {
+          form.reset();
+          status.textContent = form.getAttribute('data-success');
+          status.classList.add('is-success');
+        } else {
+          throw new Error('failed');
+        }
+      })
+      .catch(function () {
+        status.textContent = form.getAttribute('data-error');
+        status.classList.add('is-error');
+      })
+      .finally(function () {
+        button.disabled = false;
+        button.textContent = original;
+      });
+  });
+
+  // Copy-email button
+  document.addEventListener('click', function (event) {
+    var button = event.target.closest && event.target.closest('.copy');
+    if (!button) return;
+    var email = button.getAttribute('data-email');
+    var original = button.textContent;
+    function done() {
+      button.textContent = 'Copied';
+      setTimeout(function () { button.textContent = original; }, 1600);
+    }
+    function selectText() {
+      var link = button.parentNode.querySelector('.email');
+      var range = document.createRange();
+      range.selectNodeContents(link);
+      var selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(email).then(done, selectText);
+    } else {
+      selectText();
+    }
+  });
+</script>
+
+<style>
+  .body { display: grid; gap: clamp(32px, 5vw, 56px); }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(16px, 3vw, 28px);
+  }
+  .card {
+    padding: clamp(24px, 3vw, 32px);
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    display: grid;
+    gap: 12px;
+    align-content: start;
+  }
+  .card h2 { font-size: 1.35rem; letter-spacing: -0.02em; }
+  .card p {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    line-height: 1.6;
+  }
+
+  .form-wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+    gap: clamp(24px, 5vw, 64px);
+    padding-top: clamp(32px, 4vw, 48px);
+    border-top: 1px solid var(--line);
+  }
+  .form-intro { display: grid; gap: 10px; align-content: start; }
+  .form-intro h2 { font-size: clamp(1.5rem, 2.6vw, 2rem); letter-spacing: -0.03em; }
+  .contact-form { display: grid; gap: 18px; min-width: 0; }
+  .row-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .field { display: grid; gap: 8px; min-width: 0; }
+  .field span { font-size: 0.9rem; font-weight: 600; }
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    font: inherit;
+    font-size: 1rem;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .field textarea { resize: vertical; min-height: 140px; line-height: 1.5; }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+  .botcheck { display: none; }
+  .submit-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .submit-row .btn { border: 0; cursor: pointer; font-family: inherit; }
+  .submit-row .btn:disabled { opacity: 0.6; cursor: default; transform: none; }
+  .status { font-size: 0.95rem; color: var(--muted); }
+  .status.is-success { color: var(--text); font-weight: 600; }
+  .status.is-error { color: var(--accent); font-weight: 600; }
+
+  .reach {
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 12px;
+    justify-items: start;
+  }
+  .reach-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .email-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; min-width: 0; }
+  .email {
+    font-size: clamp(1.3rem, 3.4vw, 2rem);
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    overflow-wrap: anywhere;
+  }
+  a.email:hover { color: var(--accent); }
+  .copy { height: 40px; padding: 0 18px; font-size: 0.9rem; background: transparent; color: var(--text); cursor: pointer; font-family: inherit; }
+  .links { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px 24px; font-weight: 600; }
+  .links a:hover { color: var(--accent); }
+
+  @media (max-width: 860px) {
+    .form-wrap { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 680px) {
+    .cards, .row-2 { grid-template-columns: 1fr; }
+  }
+</style>
