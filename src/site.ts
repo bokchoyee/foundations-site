@@ -163,9 +163,9 @@ export const aboutMe = {
   ],
   whyHeading: 'Why I started The Foundations Project',
   why: [
-    'I started The Foundations Project because I was living alone and realized that independence was nothing like I had imagined it would be.',
-    'My friends thought living alone meant unlimited freedom. Doing whatever I wanted, whenever I wanted. In some ways, I had that freedom. But there was another side to it that was much harder to explain. Without the structure most people take for granted, even simple things could become difficult. I fell victim to the classic teenage sins: sleeping in, skipping meals and playing games all day. They started to take over my life, and nobody was there to call me out.',
-    'I became interested in the gap between what independence looks like from the outside and what it actually feels like to live it. The project started as my way of making sense of that experience, and grew into writing about the questions it raised.',
+    "I started The Foundations Project because of my own experience. Ever since I started high school in Canada, I've lived alone while my parents worked abroad. Along the way, I found out that independence was nothing like I had imagined it would be.",
+    'My friends thought living alone meant unlimited freedom. Doing whatever I wanted, whenever I wanted. In some ways, I had that freedom. But there was another side to it that was much harder to explain. Without the structure most people take for granted, even simple things could become difficult. I personally fell victim to the classic teenage sins. Things like sleeping in, skipping meals, and playing games all day began to take over my life, and nobody was there to call me out.',
+    'I became interested in that gap between what independence looks like from the outside and what it actually feels like to live it. The project started as a way to make sense of that experience, and turned into an attempt to explore those questions through writing.',
   ],
   // Optional. Leave the list empty ([]) to hide this section.
   nowHeading: "What I'm working on now",
