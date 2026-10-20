@@ -100,7 +100,8 @@ export const partners = {
       name: 'Strive BC',
       url: 'https://ywcabc.org/strive',
       page: '',
-      about: 'A YWCA BC life skills and employment program for youth aged 16 to 29 who are leaving or have left care.',
+      // Strive's own wording (Aisling Clarke, Oct 19).
+      about: 'A YWCA BC program focusing on life skills and employment workshops for youth aged 16–29 years old who are transitioning or have transitioned out of government care.',
     },
   ],
   learnMore: 'Learn more',
